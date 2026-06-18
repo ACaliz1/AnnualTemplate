@@ -18,6 +18,9 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/daniel-annual') }}
+
 jobs:
   validate:
     name: Validate static files
@@ -36,18 +39,18 @@ jobs:
           test -f assets/reload.png
 
       - name: Prepare site artifact
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: env.SHOULD_DEPLOY == 'true'
         run: |
           mkdir -p dist
           cp index.html index2.html dist/
           cp -R assets dist/
 
       - name: Configure GitHub Pages
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: env.SHOULD_DEPLOY == 'true'
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: env.SHOULD_DEPLOY == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
@@ -55,7 +58,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     needs: validate
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/daniel-annual')
     runs-on: ubuntu-latest
     environment:
       name: github-pages
