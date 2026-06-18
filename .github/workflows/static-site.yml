@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - daniel-annual
   workflow_dispatch:
 
 permissions:
