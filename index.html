@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Annual Albert Cáliz</title>
+    <link rel="icon" href="assets/favi.png" />
+    <style>
+        .logo-ntt {
+            height: 34px;
+            margin-left: 18px;
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+
+        .explicacion-box {
+            margin-top: 36px;
+            padding: 18px 22px;
+            background: #f4f8fb;
+            border-radius: 10px;
+            border: 1.5px solid #e0e6ed;
+            color: #34495e;
+            font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .04);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: #c3cfe2;
+            font-family: "Segoe UI", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center
+        }
+
+        .slide {
+            width: 1024px;
+            height: 500px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
+            padding: 30px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: 26px;
+            text-align: center;
+            color: #2c3e50
+        }
+
+        .cols {
+            display: flex;
+            gap: 40px;
+            flex: 1;
+            min-height: 0
+        }
+
+        .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            font-size: 18px;
+            text-align: center;
+            color: #34495e;
+            border-bottom: 2px solid #e0e6ed;
+            padding-bottom: 6px
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .card {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            transition: background .25s, border .25s;
+            cursor: pointer;
+            min-height: 37px;
+
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .08)
+        }
+
+        .comp {
+            --c: #3498db
+        }
+
+        .comp:nth-child(1) {
+            --c: #3498db
+        }
+
+        .comp:nth-child(2) {
+            --c: #2ecc71
+        }
+
+        .comp:nth-child(3) {
+            --c: #9b59b6
+        }
+
+        .comp:nth-child(4) {
+            --c: #e67e22
+        }
+
+        .comp:nth-child(5) {
+            --c: #a362ff
+        }
+
+        .comp.active {
+            background: var(--c);
+            color: #fff;
+            border-color: var(--c)
+        }
+
+        .goal.highlight {
+            background: #3498db;
+            color: #fff !important;
+            border-color: #3498db
+        }
+
+        body.competency-active .goal:not(.highlight) {
+            display: none
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lvl {
+            font-size: 11px;
+            opacity: .8
+        }
+
+        .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #7f8c8d;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            flex-shrink: 0
+        }
+
+        .goal.highlight .num {
+            background: #fff;
+            color: var(--c)
+        }
+
+        #reload img {
+            height: 14px;
+            width: 14px;
+            cursor: pointer
+        }
+
+        /* --- Botón Plan de acción --- */
+        .toolbar {
+            position: absolute;
+            right: 40px;
+            top: 28px;
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .btn {
+            border: none;
+            background: #2c82f6;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(44, 130, 246, .25);
+            transition: transform .06s
+        }
+
+        .btn:hover {
+            transform: translateY(-1px)
+        }
+
+        .btn.secondary {
+            background: #ababab;
+            color: #2c3e50
+        }
+
+        .btn.secondary:hover {
+            transform: none;
+            filter: brightness(0.98)
+        }
+
+        /* --- Modal Plan de acción --- */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .55);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000
+        }
+
+        .modal {
+            width: 880px;
+            max-width: 92vw;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, .25);
+            overflow: hidden;
+            animation: pop .12s ease-out
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.96);
+                opacity: .6
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eef2f7
+        }
+
+        .modal-title {
+            font-weight: 800;
+            color: #1f2d3d
+        }
+
+        .close {
+            background: #f3f5f8;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer
+        }
+
+        .modal-body {
+            padding: 18px 20px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            vertical-align: top
+        }
+
+        th {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: #667085
+        }
+
+        tr {
+            background: #f8fafc;
+            border: 1px solid #ecf0f4
+        }
+
+        tr td:first-child {
+            border-left: 4px solid #2c82f6;
+            border-radius: 10px 0 0 10px;
+            font-weight: 600;
+            color: #1f2d3d
+        }
+
+        tr td:last-child {
+            border-radius: 0 10px 10px 0
+        }
+
+        .card.goal{
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <div class="toolbar">
+            <button id="btnPlan" class="btn">Action plan</button>
+            <button id="reload" class="btn secondary" title="Reset">
+                <img src="assets/reload.png" alt="Reload" />
+            </button>
+        </div>
+        <div> <img src="assets/logo.png" alt="NTT DATA" class="logo-ntt" />
+            <h1>Annual Albert Cáliz</h1>
+        </div>
+
+        <div class="cols">
+            <div class="col">
+                <h2>Competencies</h2>
+                <div class="list">
+                    <div class="card comp" data-c="1">
+                        <div class="row"><span>Interacción con software</span></div>
+                        <div class="lvl">Nivel 2</div>
+                    </div>
+                    <div class="card comp" data-c="2">
+                        <div class="row"><span>Agilidad de aprendizaje</span></div>
+                        <div class="lvl">Nivel 2</div>
+                    </div>
+                    <div class="card comp" data-c="3">
+                        <div class="row"><span>Pensamiento sistémico</span></div>
+                        <div class="lvl">Nivel 1</div>
+                    </div>
+                    <div class="card comp" data-c="4">
+                        <div class="row"><span>Pensamiento analítico</span></div>
+                        <div class="lvl">Nivel 1</div>
+                    </div>
+                    <div class="card comp" data-c="5">
+                        <div class="row"><span>Adaptabilidad/Flexibilidad</span></div>
+                        <div class="lvl">Nivel 1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <h2>Goals</h2>
+                <div class="list">
+                    <div class="card goal" data-g="1">
+                        <div class="row"><span class="num">1</span><span>Definir el diseño técnico de la solución</span>
+                        </div>
+                    </div>
+                    <div class="card goal" data-g="2">
+                        <div class="row"><span class="num">2</span><span>Estimar los esfuerzos relacionados con las
+                                tareas</span></div>
+                    </div>
+                    <div class="card goal" data-g="3">
+                        <div class="row"><span class="num">3</span><span>Desarrollar programas/módulos parte de la
+                                solución</span></div>
+                    </div>
+                    <div class="card goal" data-g="4">
+                        <div class="row"><span class="num">4</span><span>Desarrollarme en Inteligencia artificial generativa</span>
+                        </div>
+                    </div>
+                    <div class="card goal" data-g="5">
+                        <div class="row"><span class="num">5</span><span>Prestar apoyo en la resolución de
+                                problemas</span></div>
+                    </div>
+                </div>
+                <div id="explicacion" class="explicacion-box"></div>
+            </div>
+        </div>
+    </div>
+    <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <img src="assets/logo.png" alt="NTT DATA" class="logo-ntt" />
+                <div class="modal-title" id="modalTitle">Action plan
+                </div>
+                <button id="closeModal" class="close">Cerrar</button>
+            </div>
+            <div class="modal-body">
+                <table id="planTable" aria-label="Tabla plan de acción">
+                    <thead>
+                        <tr>
+                            <th style="width:36%">Goal</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        const explicaciones = {
+            1: { justificacion: 'Necesito consolidar mis conocimientos técnicos, tanto al plantear soluciones como al implementarlas con buenas prácticas.' },
+            2: { justificacion: 'Aprender rápido y adaptarme a nuevas tecnologías me permite aportar más valor al equipo y asumir tareas cada vez más complejas.' },
+            3: { justificacion: 'Porque debo entender cómo encaja mi parte en el conjunto del sistema, y así proponer soluciones o entender mejor el impacto de un problema.' },
+            4: { justificacion: 'Tanto estimar tareas como definir el diseño técnico requieren analizar y desglosar las tareas en partes más pequeñas.' },
+            5: { justificacion: 'Aprender nuevas tecnologías como la IA generativa requiere adaptarse a entornos cambiantes, igual que apoyar en la resolución de problemas implica flexibilidad para priorizar las necesidades del equipo.' }
+        };
+        // Mapa Competency -> Goals destacadas
+        const map = {
+            1: [1, 3, 4], // Interacción software
+            2: [1, 3, 4], // Agilidad aprendizaje
+            3: [1, 5], // Pensamiento sistémico
+            4: [1, 2], // Pensamiento analítico
+            5: [4, 5]  // Adaptabilidad
+        };
+        const actionPlan = [
+            {
+                id: 1, goal: 'Definir el diseño técnico de la solución',
+                action: 'Analizar mejor los requisitos técnicos y aprender a proponer soluciones claras y viables.'
+            },
+            {
+                id: 2, goal: 'Estimar los esfuerzos relacionados con las tareas',
+                action: 'Practicar la estimación en las tareas, comparando previsiones con tiempos reales para optimizar las entregas.'
+            },
+            {
+                id: 3, goal: 'Desarrollar programas/módulos parte de la solución',
+                action: 'Mejorar mi conocimiento en Rasa y Python aplicándolo en nuevas funcionalidades, asegurando buenas prácticas.'
+            },
+            {
+                id: 4, goal: 'Desarrollarme en Inteligencia artificial generativa',
+                action: 'Formarme en IA generativa para cuando sea un requerimiento en futuros proyectos, pudiendo aportar más valor desde un principio.'
+            },
+            {
+                id: 5, goal: 'Prestar apoyo en la resolución de problemas',
+                action: 'Implicarme más en incidencias del proyecto, proponiendo alternativas y ayudando a encontrar soluciones rápidas.'
+            }
+        ];
+        // Interacciones Competency ↔ Goals
+        document.querySelectorAll('.comp').forEach(c => {
+            c.addEventListener('click', () => {
+                const n = +c.dataset.c;
+                document.querySelectorAll('.comp').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.goal').forEach(g => {
+                    g.classList.remove('highlight');
+                    g.style.background = '#f8f9fa'; g.style.color = '#2c3e50'; g.style.borderColor = '#e9ecef';
+                    g.style.removeProperty('--c');
+                });
+                c.classList.add('active');
+                document.body.classList.add('competency-active');
+                const compColor = getComputedStyle(c).getPropertyValue('--c') || '#3498db';
+                map[n].forEach(g => {
+                    const goal = document.querySelector(`.goal[data-g="${g}"]`);
+                    goal.classList.add('highlight');
+                    goal.style.background = compColor; goal.style.color = '#fff'; goal.style.borderColor = compColor;
+                    goal.style.setProperty('--c', compColor);
+                });
+                const exp = explicaciones[n];
+                const expBox = document.getElementById('explicacion');
+                expBox.innerHTML = `<b>Justificación:</b> ${exp.justificacion}`;
+                expBox.style.display = 'block';
+            });
+        });
+        // Reset
+        document.getElementById('reload').addEventListener('click', () => {
+            document.querySelectorAll('.comp').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.goal').forEach(g => {
+                g.classList.remove('highlight');
+                g.style.background = '#f8f9fa'; g.style.color = '#2c3e50'; g.style.borderColor = '#e9ecef';
+            });
+            document.body.classList.remove('competency-active');
+            document.getElementById('explicacion').style.display = 'none';
+        });
+        // Modal Plan de acción
+        const backdrop = document.getElementById('modalBackdrop');
+        const openModal = () => { backdrop.style.display = 'flex'; };
+        const closeModal = () => { backdrop.style.display = 'none'; };
+        document.getElementById('btnPlan').addEventListener('click', openModal);
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+        // Rellenar tabla del plan
+        const tbody = document.querySelector('#planTable tbody');
+        actionPlan.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${row.goal}</td><td>${row.action}</td>`;
+            tbody.appendChild(tr);
+        });
+    </script>
+</body>
+
+</html>
